@@ -15,7 +15,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();\r\n\r\npm.test(\"Faculty login successful\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.environment.set(\"facultyToken\", response.token);"
+              "const response = pm.response.json();\r\n\r\npm.test(\"Faculty login successful\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.collectionVariables.set(\"facultyToken\", response.token);"
             ]
           }
         }
@@ -80,6 +80,17 @@
     },
     {
       "name": "Student Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"Student login successful\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.collectionVariables.set(\"studentToken\", response.token);\r\n\r\npm.test(\"Student token saved successfully\", function () {\r\n    pm.expect(pm.collectionVariables.get(\"studentToken\")).to.be.a(\"string\").and.not.empty;\r\n});"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
@@ -110,19 +121,44 @@
     },
     {
       "name": "Student - GET My Grades",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token = pm.collectionVariables.get(\"studentToken\");\r\n\r\nconsole.log(\"Student token exists:\", Boolean(token));"
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token = pm.collectionVariables.get(\"studentToken\");\r\n\r\npm.request.headers.upsert({\r\n    key: \"Authorization\",\r\n    value: \"Bearer \" + token\r\n});\r\n\r\nconsole.log(\"Student token length:\", token ? token.length : 0);"
+            ]
+          }
+        }
+      ],
       "request": {
         "auth": {
           "type": "bearer",
           "bearer": [
             {
               "key": "token",
-              "value": "{{json_web_token_0s94}}",
+              "value": "{{studentToken}}",
               "type": "string"
             }
           ]
         },
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{studentToken}}"
+          }
+        ],
         "url": {
           "raw": "https://localhost:7043/api/Grades/my-grades",
           "protocol": "https",
@@ -141,13 +177,24 @@
     },
     {
       "name": "Student - PUT Restriction",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token = pm.collectionVariables.get(\"studentToken\");\r\n\r\npm.request.headers.upsert({\r\n    key: \"Authorization\",\r\n    value: \"Bearer \" + token\r\n});\r\n\r\nconsole.log(\"Student token length:\", token ? token.length : 0);"
+            ]
+          }
+        }
+      ],
       "request": {
         "auth": {
           "type": "bearer",
           "bearer": [
             {
               "key": "token",
-              "value": "{{json_web_token_0san}}",
+              "value": "{{studentToken}}",
               "type": "string"
             }
           ]
@@ -181,22 +228,84 @@
     },
     {
       "name": "Student - DELETE Restriction",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token = pm.collectionVariables.get(\"studentToken\");\r\n\r\npm.request.headers.upsert({\r\n    key: \"Authorization\",\r\n    value: \"Bearer \" + token\r\n});\r\n\r\nconsole.log(\"Student token length:\", token ? token.length : 0);"
+            ]
+          }
+        }
+      ],
       "request": {
-        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{studentToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
         "header": [],
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades/2",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "2"
+          ]
         }
       },
       "response": []
     },
     {
       "name": "Student - Ownership Restriction",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token = pm.collectionVariables.get(\"studentToken\");\r\n\r\npm.request.headers.upsert({\r\n    key: \"Authorization\",\r\n    value: \"Bearer \" + token\r\n});\r\n\r\nconsole.log(\"Student token length:\", token ? token.length : 0);"
+            ]
+          }
+        }
+      ],
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{studentToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
         "header": [],
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades/2",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "2"
+          ]
         }
       },
       "response": []
@@ -207,7 +316,16 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades"
+          ]
         }
       },
       "response": []
@@ -215,10 +333,38 @@
     {
       "name": "Validation - Grade 105",
       "request": {
-        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{facultyToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"studentId\": 1,\r\n  \"subjectCode\": \"INVALID105\",\r\n  \"subjectName\": \"Invalid Grade Test\",\r\n  \"grade\": 105,\r\n  \"semester\": \"1st Semester\",\r\n  \"schoolYear\": \"2026-2027\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades"
+          ]
         }
       },
       "response": []
@@ -226,10 +372,38 @@
     {
       "name": "Validation - False Remarks",
       "request": {
-        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{facultyToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"studentId\": 1,\r\n  \"subjectCode\": \"REMARKS101\",\r\n  \"subjectName\": \"Remarks Validation Test\",\r\n  \"grade\": 85,\r\n  \"remarks\": \"CMS\",\r\n  \"semester\": \"1st Semester\",\r\n  \"schoolYear\": \"2026-2027\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades"
+          ]
         }
       },
       "response": []
@@ -237,10 +411,39 @@
     {
       "name": "Faculty - PUT Update Grade",
       "request": {
-        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{facultyToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"studentId\": 1,\r\n  \"subjectCode\": \"FINAL101\",\r\n  \"subjectName\": \"Final Test Subject\",\r\n  \"grade\": 92,\r\n  \"semester\": \"2nd\",\r\n  \"schoolYear\": \"2026-2027\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades/19",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "19"
+          ]
         }
       },
       "response": []
@@ -248,10 +451,30 @@
     {
       "name": "Faculty - GET Grade by ID",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{facultyToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
         "header": [],
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades/17",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "17"
+          ]
         }
       },
       "response": []
@@ -259,10 +482,30 @@
     {
       "name": "Faculty - DELETE Grade",
       "request": {
-        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{facultyToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
         "header": [],
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades/20",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "20"
+          ]
         }
       },
       "response": []
@@ -270,21 +513,81 @@
     {
       "name": "Faculty - POST Create Grade",
       "request": {
-        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{facultyToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"studentId\": 1,\r\n  \"subjectCode\": \"COLLECTION101\",\r\n  \"subjectName\": \"Collection Test Subject\",\r\n  \"grade\": 90,\r\n  \"semester\": \"2nd Semester\",\r\n  \"schoolYear\": \"2026-2027\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades/2",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "2"
+          ]
         }
       },
       "response": []
     },
     {
       "name": "Student GET Grade by ID",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token = pm.collectionVariables.get(\"studentToken\");\r\n\r\npm.request.headers.upsert({\r\n    key: \"Authorization\",\r\n    value: \"Bearer \" + token\r\n});\r\n\r\nconsole.log(\"Student token length:\", token ? token.length : 0);"
+            ]
+          }
+        }
+      ],
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{studentToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
         "header": [],
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades/2",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "2"
+          ]
         }
       },
       "response": []
@@ -292,10 +595,38 @@
     {
       "name": "Student - POST Create Grade Restriction",
       "request": {
-        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{studentToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"studentId\": 2,\r\n  \"subjectCode\": \"BLOCK101\",\r\n  \"subjectName\": \"Student Access Test\",\r\n  \"grade\": 90,\r\n  \"semester\": \"1st Semester\",\r\n  \"schoolYear\": \"2026-2027\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": ""
+          "raw": "https://localhost:7043/api/Grades",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades"
+          ]
         }
       },
       "response": []
@@ -317,6 +648,10 @@
     {
       "key": "json_web_token_1bsw",
       "secret": true
+    },
+    {
+      "key": "studentToken",
+      "value": ""
     }
   ]
 }
