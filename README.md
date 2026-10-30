@@ -75,9 +75,11 @@ StudentGradeManagement.API/
 │   ├── wwwroot/
 │   └── Program.cs
 │
+├── Postman Screenshots/
+├── Demo Video/
 ├── StudentGradeManagement.API.slnx
 ├── StudentGradeManagementDB_WS_FINAL_PROJECT.sql
-├── Student Grade Management System API Tests.json
+├── Student Grade Management System API Tests.postman_collection.json
 └── README.md
 ```
 
@@ -99,15 +101,16 @@ The project includes an SQL script named:
 
 `StudentGradeManagementDB_WS_FINAL_PROJECT.sql`
 
-Follow these steps to recreate the database:
+Follow these steps to set up the database:
 
-1. Open SQL Server Management Studio.
+1. Open SQL Server Management Studio (SSMS).
 2. Connect to your local SQL Server instance.
-3. Open the provided SQL script.
-4. Execute the script.
-5. Verify that the `StudentGradeManagementDB` database has been created successfully.
+3. Create a new database named `StudentGradeManagementDB`.
+4. Open the provided SQL script.
+5. Execute the SQL script to create the required tables, relationships, constraints, and initial records.
+6. Verify that the tables and records have been created successfully.
 
-The script contains the database structure, tables, relationships, constraints, and required records.
+**Important:** Create the database before executing the script. Execute the script only once on a newly created database unless it has been modified to support repeated execution.
 
 8. Database Configuration
 
@@ -164,7 +167,7 @@ Student Accounts
 | student03 | Student@123! | Student |
 | student04 | Student@123! | Student |
 
-Note: These credentials are intended for academic testing only. Do not use them in a production system. Change the passwords before deploying the application publicly.
+**Note:** These credentials are intended for academic testing only. Do not use them in a production system. Change the passwords before deploying the application publicly.
 
 The `student04` account is intended for testing a student with no grade records.
 
@@ -219,7 +222,7 @@ Student Endpoints
 
 The project includes a Postman collection named:
 
-`Student Grade Management System API Tests`
+`Student Grade Management System API Tests.postman_collection.json`
 
 Import the collection into Postman to test the API endpoints.
 
@@ -236,7 +239,7 @@ The collection includes tests for:
 - Student record ownership
 - Automatic grade remarks
 
-Screenshots of the test results should be included with the project submission.
+Screenshots of the test results are included in the `Postman Screenshots` folder.
 
 15. Security and Validation
 
@@ -250,4 +253,3 @@ The system implements the following security and validation measures:
 - Server-side grade validation
 - Automatic grade remarks computation
 - Prevention of unauthorized grade modifications
-
