@@ -1,0 +1,322 @@
+{
+  "info": {
+    "_postman_id": "45ab1f16-cebf-4304-ba6c-3993704c711a",
+    "name": "Student Grade Management System API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "57804704",
+    "_collection_link": "https://go.postman.co/collection/57804704-45ab1f16-cebf-4304-ba6c-3993704c711a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Faculty Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"Faculty login successful\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.environment.set(\"facultyToken\", response.token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"faculty01\",\n    \"password\": \"Faculty@123!\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7043/api/Auth/login",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Faculty - GET All Grades",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_1bsw}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7043/api/Grades",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Student Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"username\": \"student02\",\r\n    \"password\": \"Student@123!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7043/api/Auth/login",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Student - GET My Grades",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0s94}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7043/api/Grades/my-grades",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "my-grades"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Student - PUT Restriction",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0san}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"grade\": 90,\r\n    \"semester\": \"1st Semester\",\r\n    \"schoolYear\": \"2026-2027\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7043/api/Grades/3",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7043",
+          "path": [
+            "api",
+            "Grades",
+            "3"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Student - DELETE Restriction",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Student - Ownership Restriction",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Authentication - No Token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Validation - Grade 105",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Validation - False Remarks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Faculty - PUT Update Grade",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Faculty - GET Grade by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Faculty - DELETE Grade",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Faculty - POST Create Grade",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Student GET Grade by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Student - POST Create Grade Restriction",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "facultyToken",
+      "value": ""
+    },
+    {
+      "key": "json_web_token_0san",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0s94",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_1bsw",
+      "secret": true
+    }
+  ]
+}

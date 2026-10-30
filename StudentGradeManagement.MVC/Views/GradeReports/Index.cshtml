@@ -1,0 +1,325 @@
+﻿@model List<StudentGradeManagement.MVC.Models.GradeReportViewModel>
+
+@{
+    ViewData["Title"] = "Grade Reports";
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold">Grade Reports</h2>
+            <p class="text-muted mb-0">
+                Review and monitor student grade records.
+            </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2 flex-wrap">
+            <a id="exportCsvButton"
+               asp-controller="GradeReports"
+               asp-action="ExportCsv"
+               class="btn btn-success">
+                Export to CSV
+            </a>
+
+            <a id="exportPdfButton"
+               asp-controller="GradeReports"
+               asp-action="ExportPdf"
+               class="btn btn-danger">
+                Export to PDF
+            </a>
+
+            <a asp-controller="Faculty"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Error Messages -->
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (TempData["ExportError"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ExportError"]
+        </div>
+    }
+
+    <!-- Grade Reports Card -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="alert alert-info mb-0">
+                    No grade records found.
+                </div>
+            }
+            else
+            {
+                <!-- Search and Filters -->
+                <div class="row g-3 mb-4">
+
+                    <!-- Search -->
+                    <div class="col-md-4">
+                        <label for="gradeSearch" class="form-label fw-bold">
+                            Search Grade Reports
+                        </label>
+
+                        <input type="text"
+                               id="gradeSearch"
+                               class="form-control"
+                               placeholder="Search student, subject, grade, or remarks..." />
+
+                        <small class="text-muted">
+                            Type to search grade records.
+                        </small>
+                    </div>
+
+                    <!-- Semester Filter -->
+                    <div class="col-md-4">
+                        <label for="semesterFilter" class="form-label fw-bold">
+                            Filter by Semester
+                        </label>
+
+                        <select id="semesterFilter" class="form-select">
+                            <option value="">All Semesters</option>
+
+                            @foreach (string semester in Model
+                                .Where(report => !string.IsNullOrWhiteSpace(report.Semester))
+                                .Select(report => report.Semester)
+                                .Distinct()
+                                .OrderBy(semester => semester))
+                            {
+                                <option value="@semester">@semester</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- School Year Filter -->
+                    <div class="col-md-4">
+                        <label for="schoolYearFilter" class="form-label fw-bold">
+                            Filter by School Year
+                        </label>
+
+                        <select id="schoolYearFilter" class="form-select">
+                            <option value="">All School Years</option>
+
+                            @foreach (string schoolYear in Model
+                                .Where(report => !string.IsNullOrWhiteSpace(report.SchoolYear))
+                                .Select(report => report.SchoolYear)
+                                .Distinct()
+                                .OrderByDescending(schoolYear => schoolYear))
+                            {
+                                <option value="@schoolYear">@schoolYear</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Grade Reports Table -->
+                <div class="table-responsive">
+                    <table id="gradeReportsTable"
+                           class="table table-striped table-hover align-middle">
+
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Student Number</th>
+                                <th>Student Name</th>
+                                <th>Subject</th>
+                                <th>Semester</th>
+                                <th>School Year</th>
+                                <th>Grade</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (StudentGradeManagement.MVC.Models.GradeReportViewModel report in Model)
+                            {
+                                <tr>
+                                    <td>@report.StudentNumber</td>
+                                    <td>@report.StudentName</td>
+                                    <td>@report.SubjectCode</td>
+                                    <td>@report.Semester</td>
+                                    <td>@report.SchoolYear</td>
+                                    <td>@report.Grade.ToString("0.##")</td>
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(report.Remarks))
+                                        {
+                                            @report.Remarks
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+
+                    <!-- No Search Results -->
+                    <div id="noSearchResults"
+                         class="alert alert-warning d-none">
+                        No matching grade records found.
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-4 text-muted">
+        <small>
+            UST Angelicum College — Student Grade Management System
+        </small>
+    </div>
+
+</div>
+
+<!-- Search, Filters, and Export Links -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const searchInput = document.getElementById("gradeSearch");
+        const semesterFilter = document.getElementById("semesterFilter");
+        const schoolYearFilter = document.getElementById("schoolYearFilter");
+        const table = document.getElementById("gradeReportsTable");
+        const noResults = document.getElementById("noSearchResults");
+
+        const exportCsvButton = document.getElementById("exportCsvButton");
+        const exportPdfButton = document.getElementById("exportPdfButton");
+
+        // Update export links using the current search and filter values.
+        function updateExportLinks() {
+
+            const params = new URLSearchParams();
+
+            if (searchInput && searchInput.value.trim() !== "") {
+                params.set("search", searchInput.value.trim());
+            }
+
+            if (semesterFilter && semesterFilter.value !== "") {
+                params.set("semester", semesterFilter.value);
+            }
+
+            if (schoolYearFilter && schoolYearFilter.value !== "") {
+                params.set("schoolYear", schoolYearFilter.value);
+            }
+
+            const queryString = params.toString();
+
+            const exportCsvUrl =
+                '@Url.Action("ExportCsv", "GradeReports")';
+
+            const exportPdfUrl =
+                '@Url.Action("ExportPdf", "GradeReports")';
+
+            if (exportCsvButton) {
+                exportCsvButton.href = exportCsvUrl +
+                    (queryString ? "?" + queryString : "");
+            }
+
+            if (exportPdfButton) {
+                exportPdfButton.href = exportPdfUrl +
+                    (queryString ? "?" + queryString : "");
+            }
+        }
+
+        // Filter the visible table rows.
+        function filterGradeReports() {
+
+            if (!table) {
+                updateExportLinks();
+                return;
+            }
+
+            const searchText = searchInput
+                ? searchInput.value.toLowerCase().trim()
+                : "";
+
+            const selectedSemester = semesterFilter
+                ? semesterFilter.value.toLowerCase().trim()
+                : "";
+
+            const selectedSchoolYear = schoolYearFilter
+                ? schoolYearFilter.value.toLowerCase().trim()
+                : "";
+
+            const rows = table.querySelectorAll("tbody tr");
+            let visibleRows = 0;
+
+            rows.forEach(function(row) {
+
+                const cells = row.querySelectorAll("td");
+                const rowText = row.innerText.toLowerCase();
+
+                // Semester is column 4 (index 3).
+                const semester = cells[3]
+                    ? cells[3].innerText.trim().toLowerCase()
+                    : "";
+
+                // School Year is column 5 (index 4).
+                const schoolYear = cells[4]
+                    ? cells[4].innerText.trim().toLowerCase()
+                    : "";
+
+                const matchesSearch = rowText.includes(searchText);
+
+                const matchesSemester =
+                    selectedSemester === "" ||
+                    semester === selectedSemester;
+
+                const matchesSchoolYear =
+                    selectedSchoolYear === "" ||
+                    schoolYear === selectedSchoolYear;
+
+                const matches =
+                    matchesSearch &&
+                    matchesSemester &&
+                    matchesSchoolYear;
+
+                row.style.display = matches ? "" : "none";
+
+                if (matches) {
+                    visibleRows++;
+                }
+            });
+
+            if (noResults) {
+                noResults.classList.toggle("d-none", visibleRows > 0);
+            }
+
+            // Keep the export links synchronized with the filters.
+            updateExportLinks();
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener("input", filterGradeReports);
+        }
+
+        if (semesterFilter) {
+            semesterFilter.addEventListener("change", filterGradeReports);
+        }
+
+        if (schoolYearFilter) {
+            schoolYearFilter.addEventListener("change", filterGradeReports);
+        }
+
+        // Initialize export links when the page loads.
+        updateExportLinks();
+    });
+</script>

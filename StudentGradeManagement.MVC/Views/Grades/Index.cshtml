@@ -1,0 +1,141 @@
+﻿@model IEnumerable<StudentGradeManagement.MVC.Models.GradeViewModel>
+
+@{
+    ViewData["Title"] = "Manage Grades";
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold">Manage Grades</h2>
+            <p class="text-muted mb-0">
+                View and manage student grades and academic records.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-controller="Grades"
+               asp-action="Create"
+               class="btn btn-primary">
+                + Add Grade
+            </a>
+
+            <a asp-controller="Faculty"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"
+             role="alert">
+
+            @TempData["SuccessMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
+
+        </div>
+    }
+
+    <!-- Grades Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Student No.</th>
+                            <th>Student Name</th>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Grade</th>
+                            <th>Remarks</th>
+                            <th>Semester</th>
+                            <th>School Year</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (StudentGradeManagement.MVC.Models.GradeViewModel item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @(item.Student?.StudentNumber ?? "N/A")
+                                    </td>
+
+                                    <td>
+                                        @(item.Student == null
+                                            ? "N/A"
+                                            : $"{item.Student.FirstName} {item.Student.LastName}")
+                                    </td>
+
+                                    <td>@item.SubjectCode</td>
+                                    <td>@item.SubjectName</td>
+                                    <td>@item.Grade</td>
+                                    <td>@item.Remarks</td>
+                                    <td>@item.Semester</td>
+                                    <td>@item.SchoolYear</td>
+
+                                    <!-- Edit and Delete Buttons -->
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a asp-controller="Grades"
+                                               asp-action="Edit"
+                                               asp-route-id="@item.GradeId"
+                                               class="btn btn-warning btn-sm">
+                                                Edit
+                                            </a>
+
+                                            <a asp-controller="Grades"
+                                               asp-action="Delete"
+                                               asp-route-id="@item.GradeId"
+                                               class="btn btn-danger btn-sm">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9"
+                                    class="text-center text-muted py-4">
+                                    No grade records found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer Note -->
+    <div class="mt-4 text-muted">
+        <small>
+            UST Angelicum College — Student Grade Management System
+        </small>
+    </div>
+
+</div>

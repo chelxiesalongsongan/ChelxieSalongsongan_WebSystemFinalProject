@@ -1,0 +1,63 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - UST Angelicum College</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StudentGradeManagement.MVC.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid px-3 px-md-4">
+
+                <a class="navbar-brand d-flex align-items-center gap-3"
+                   asp-area=""
+                   asp-controller="Account"
+                   asp-action="Login">
+
+                    <img src="~/images/uac_logo.png"
+                         alt="UST Angelicum College Seal"
+                         width="45"
+                         height="45"
+                         style="object-fit: contain; background: white; border-radius: 50%; padding: 2px;" />
+
+                    <span class="school-navbar-title">
+                        UST Angelicum College
+                    </span>
+
+                </a>
+
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            <small>
+                &copy; 2026 UST Angelicum College
+                <br />
+                Student Grade Management System
+            </small>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

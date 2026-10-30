@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "Faculty Dashboard";
+}
+
+<div class="container py-4">
+
+    <!-- Dashboard Header and Logout Button -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold">Faculty Dashboard</h2>
+            <p class="text-muted mb-0">
+                Welcome to the Student Grade Management System.
+                Manage your students' grades and academic records here.
+            </p>
+        </div>
+
+        <form asp-controller="Account"
+              asp-action="Logout"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <button type="submit" class="btn btn-danger">
+                Log Out
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- Welcome Card -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <h4 class="fw-bold">Welcome, Faculty!</h4>
+            <p class="mb-0">
+                You can manage student grades and view academic records
+                using the dashboard.
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard Modules -->
+    <div class="row g-4">
+
+        <!-- Manage Grades -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body p-4">
+
+                    <h5 class="card-title fw-bold">
+                        Manage Grades
+                    </h5>
+
+                    <p class="card-text text-muted">
+                        Add, update, and manage student grades.
+                    </p>
+
+                    <a asp-controller="Grades"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        View Grades
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Records -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body p-4">
+
+                    <h5 class="card-title fw-bold">
+                        Student Records
+                    </h5>
+
+                    <p class="card-text text-muted">
+                        View student academic information.
+                    </p>
+
+                    <a asp-controller="Students"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        View Student Records
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Reports -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body p-4">
+
+                    <h5 class="card-title fw-bold">
+                        Grade Reports
+                    </h5>
+
+                    <p class="card-text text-muted">
+                        Review and monitor student grade records.
+                    </p>
+
+                    <a asp-controller="GradeReports"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        View Grade Reports
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer Note -->
+    <div class="mt-4 text-muted">
+        <small>
+            UST Angelicum College — Student Grade Management System
+        </small>
+    </div>
+
+</div>
